@@ -1,0 +1,9 @@
+{
+    "name": "DataGrid",
+    "description": "Created by Mateusz Wojcieszak for Eengine Software House",
+    "autoload": {
+        "psr-4": {
+            "MKW\\DataGridLib\\": "src"
+        }
+    }
+}
