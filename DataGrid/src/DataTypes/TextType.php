@@ -12,11 +12,6 @@ class TextType implements DataType
     {
         return $this->orderType;
     }
-    
-    public function withConfig(Config $config): DataType
-    {
-        return $this;
-    }
 
     public function format(string $value): string
     {

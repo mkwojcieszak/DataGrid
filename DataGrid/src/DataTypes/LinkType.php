@@ -16,16 +16,10 @@ class LinkType implements DataType
         return $this->orderType;
     }
     
-    public function setTag(string $val): DataType
+    public function __construct(string $tag, string $class)
     {
-        $this->tag = $val;
-        return $this;
-    }
-
-    public function setClass(string $val): DataType
-    {
-        $this->class = $val;
-        return $this;
+        $this->tag = $tag;
+        $this->class = $class;
     }
 
     public function format(string $value): string

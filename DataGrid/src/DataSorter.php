@@ -78,8 +78,6 @@ class DataSorter
         return $invalidRows;
     }
 
-
-
     private function getSortingFunction(string $order, string $orderBy, array $columns):string
     {
         //

@@ -21,6 +21,7 @@
 
         $dataGrid = new HtmlDataGrid();
         $config = (new DefaultConfig)
+            // Początkowe ustawienia:
             // ->addIntColumn('id')
             // ->addTextColumn('name')
             // ->addIntColumn('age')
@@ -29,26 +30,36 @@
             // ->addTextColumn('phone')
             // ->addTextColumn('email')
 
+            // Ustawienia pokazujące działanie ustawień
+            ->setMoneyTousandsSeparator(" spacja ")
+            ->setMoneyDecimalsSeparator(" : ")
+            //->setShowCents(false)
+
+            ->setNumbersTousandsSeparator(",")
+            ->setNumbersDecimalsSeparator(".")
+            ->setNumbersDecimals(2)
+            //->setStaticDecimals(false)
+
+            ->setImageHeight(32)
+            ->setImageWidth(32)
+
+            ->setLinkClass('success')
+            ->setLinkTag('a')
+
+            ->setDateFormat('Y/m/d')
+
+            ->setDateTimeFormat('Y/m/d H-i-s')
+
             ->addIntColumn('id')
             ->addTextColumn('name')
             ->addIntColumn('age')
             ->addTextColumn('company')
             ->addCurrencyColumn('balance', 'USD')
             ->addTextColumn('phone')
-
-            ->setImageHeight(32)
-            ->setImageWidth(32)
-            ->addImageColumn('logo')
-
-            ->setLinkClass('success')
-            ->setLinkTag('a')
             ->addLinkColumn('email')
-
-            ->setDateFormat('Y/m/d')
+            ->addImageColumn('logo')
             ->addDateColumn('birth')
-
-            ->setDateFormat('Y/m/d H-i-s')
-            ->addDateColumn('last call')
+            ->addDateTimeColumn('last call')
             ;
 
         echo $dataGrid->withConfig($config)->render($rows, $state);

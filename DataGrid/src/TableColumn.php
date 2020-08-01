@@ -11,13 +11,11 @@ class TableColumn implements Column
     private $type;
     private $align;
 
-    /**
-     * Zmienia tytuł kolumny, który będzie widoczny jako nagłówek.
-     */
-    public function withLabel(string $label): Column
+    public function __construct(string $label, DataType $type, string $align)
     {
         $this->label = $label;
-        return $this;
+        $this->type = $type;
+        $this->align = $align;
     }
 
     public function getLabel(): string
@@ -25,27 +23,9 @@ class TableColumn implements Column
         return $this->label;
     }
 
-    /**
-     * Ustawia typ danych dla kolumny.
-     */
-    public function withDataType(DataType $type): Column
-    {
-        $this->type = $type;
-        return $this;
-    }
-
     public function getDataType(): DataType
     {
         return $this->type;
-    }
-
-    /**
-     * Ustawienie wyrównania treści znajdujących się w kolumnie.
-     */
-    public function withAlign(string $align): Column
-    {
-        $this->align = $align;
-        return $this;
     }
 
     public function getAlign(): string

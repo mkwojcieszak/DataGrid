@@ -15,10 +15,9 @@ class DateType implements DataType
         return $this->orderType;
     }
     
-    public function setDateFormat(string $val): DataType
+    public function __construct(string $val)
     {
         $this->dateFormat = $val;
-        return $this;
     }
 
     public function format(string $value): string

@@ -16,16 +16,10 @@ class ImageType implements DataType
         return $this->orderType;
     }
     
-    public function setHeight(int $val): DataType
+    public function __construct(int $height, int $width)
     {
-        $this->height = $val;
-        return $this;
-    }
-
-    public function setWidth(int $val): DataType
-    {
-        $this->width = $val;
-        return $this;
+        $this->height = $height;
+        $this->width = $width;
     }
 
     public function format(string $value): string

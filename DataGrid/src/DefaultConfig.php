@@ -22,11 +22,22 @@ class DefaultConfig implements Config
 
     private $imageWidth = 16;
     private $imageHeight = 16;
+
     private $linkTag = "a";
     private $linkClass = "body";
+
     private $dateFormat = "Y-m-d";
     private $dateTimeFormat = "Y-m-d H:i:s";
 
+    private $numbersTousandsSeparator = " ";
+    private $numbersDecimalsSeparator = ",";
+    private $numbersDecimals = 2;
+    private $staticDecimals = true;
+    private $roundingFunction = "round";
+
+    private $moneyTousandsSeparator = " ";
+    private $moneyDecimalsSeparator = ",";
+    private $showCents = true;
 
 
     /**
@@ -49,56 +60,100 @@ class DefaultConfig implements Config
         return $this->columns;
     }
 
-    public function addIntColumn(string $key): Config
+    public function addTextColumn(string $key): Config
     {
-        $type = new NumberType();
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("right")
-        ;
+        $type = new TextType();
+        $col = new TableColumn($key, $type, "left");
         $this->addColumn($key, $col);
         return $this;
     }
 
-    public function addTextColumn(string $key): Config
+    public function addRawColumn(string $key): Config
     {
-        $type = new TextType();
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("left")
-        ;
+        $type = new RawType();
+        $col = new TableColumn($key, $type, "left");
         $this->addColumn($key, $col);
+        return $this;
+    }
+
+    public function addIntColumn(string $key): Config
+    {
+        $type = new NumberType(
+            $this->numbersTousandsSeparator,
+            $this->numbersDecimalsSeparator,
+            $this->numbersDecimals,
+            $this->staticDecimals,
+            $this->roundingFunction);
+        $col = new TableColumn($key, $type, "right");
+        $this->addColumn($key, $col);
+        return $this;
+    }
+
+    public function setStaticDecimals(bool $val): Config
+    {
+        $this->staticDecimals = $val;
+        return $this;
+    }
+
+    public function setRoundingFunction(string $val): Config
+    {
+        $val = strtolower($val);
+        if ($val == "round" || $val == "floor" || $val == "ceil") {
+            $this->roundingFunction = $val;
+        }
+        return $this;
+    }
+
+    public function setNumbersTousandsSeparator(string $val): Config
+    {
+        $this->numbersTousandsSeparator = $val;
+        return $this;
+    }
+
+    public function setNumbersDecimalsSeparator(string $val): Config
+    {
+        $this->numbersDecimalsSeparator = $val;
+        return $this;
+    }
+
+    public function setNumbersDecimals(int $val): Config
+    {
+        $this->numbersDecimals = $val;
         return $this;
     }
 
     public function addCurrencyColumn(string $key, string $currency): Config
     {
-        $type = (new MoneyType())
-            ->withCurrency($currency)
-        ;
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("right")
-        ;
+        $type = new MoneyType($currency, $this->moneyTousandsSeparator, $this->moneyDecimalsSeparator, $this->showCents);
+        $col = new TableColumn($key, $type, "right");
 
         $this->addColumn($key, $col);
         return $this;
     }
 
+    public function setMoneyTousandsSeparator(string $val): Config
+    {
+        $this->moneyTousandsSeparator = $val;
+        return $this;
+    }
+
+    public function setMoneyDecimalsSeparator(string $val): Config
+    {
+        $this->moneyDecimalsSeparator = $val;
+        return $this;
+    }
+
+    public function setShowCents(bool $val): Config
+    {
+        $this->showCents = $val;
+        return $this;
+    }
+
     public function addImageColumn(string $key): Config
     {
-        $type = (new ImageType())
-            ->setHeight($this->imageHeight)
-            ->setWidth($this->imageWidth);
-        
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("center")
-        ;
+        $type = new ImageType($this->imageHeight, $this->imageWidth);
+        $col = new TableColumn($key, $type, "center");
+
         $this->addColumn($key, $col);
         return $this;
     }
@@ -117,15 +172,9 @@ class DefaultConfig implements Config
 
     public function addLinkColumn(string $key): Config
     {
-        $type = (new LinkType())
-            ->setTag($this->linkTag)
-            ->setClass($this->linkClass);
-        
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("center")
-        ;
+        $type = new LinkType($this->linkTag, $this->linkClass);
+        $col = new TableColumn($key, $type, "center");
+
         $this->addColumn($key, $col);
         return $this;
     }
@@ -144,14 +193,9 @@ class DefaultConfig implements Config
 
     public function addDateColumn(string $key): Config
     {
-        $type = (new DateType())
-            ->setDateFormat($this->dateFormat);
+        $type = new DateType($this->dateFormat);
+        $col = new TableColumn($key, $type, "right");
         
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("right")
-        ;
         $this->addColumn($key, $col);
         return $this;
     }
@@ -164,21 +208,16 @@ class DefaultConfig implements Config
 
     public function addDateTimeColumn(string $key): Config
     {
-        $type = (new DateTimeType())
-            ->setDateTimeFormat($this->dateTimeFormat);
-        
-        $col = (new TableColumn())
-            ->withLabel($key)
-            ->withDataType($type)
-            ->withAlign("right")
-        ;
+        $type = new DateTimeType($this->dateTimeFormat);
+        $col = new TableColumn($key, $type, "right");
+
         $this->addColumn($key, $col);
         return $this;
     }
 
     public function setDateTimeFormat(string $val): Config
     {
-        $this->dateFormat = $val;
+        $this->dateTimeFormat = $val;
         return $this;
     }
 }

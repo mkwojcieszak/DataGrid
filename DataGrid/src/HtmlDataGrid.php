@@ -18,7 +18,7 @@ class HtmlDataGrid implements DataGrid
     private $order = 0;
     private $orderBy = 0;
     private $pageSize = 0;
-    private $columns = array();
+    //private $columns = array();
 
     /**
      * Zmienia aktualną konfigurację DataGrid.
@@ -26,7 +26,7 @@ class HtmlDataGrid implements DataGrid
     public function withConfig(Config $config): DataGrid
     {
         // adds columns from config
-        $this->columns = $config->getColumns();
+        //$this->config->getColumns() = $config->getColumns();
         $this->config = $config;
         return $this;
     }
@@ -45,7 +45,7 @@ class HtmlDataGrid implements DataGrid
          */
         if (!is_array($rows)) {
             return $this->getCriticalErrorHtml("Wprowadzone dane nie są tablicą");
-        } else if (count($this->columns) == 0) {
+        } else if (count($this->config->getColumns()) == 0) {
             return $this->getCriticalErrorHtml("Brak kolumn do wyświetlenia");
         } else {
             $tableHtml = $this->getTableHtml($rows, $state);
@@ -66,16 +66,24 @@ class HtmlDataGrid implements DataGrid
             1.438-.99.98-1.767L8.982 1.566zM8 5a.905.905 0 0 0-.9.995l.35
             3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 5zm.002 6a1 1 0 1 0
             0 2 1 1 0 0 0 0-2z"></path>
-            </svg>
-            Bład krytyczny - '.$err.'
-        </div>
-        ';
+            </svg> Bład krytyczny - '.$err.'
+        </div>';
     }
 
+    private function getErrorHtml(): string
+    {
+        return '<svg class="bi bi-exclamation-triangle-fill" width="1em" height="1em"
+        viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165
+        13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982
+        1.566zM8 5a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905
+        0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
+        </svg>';
+    }
     private function getTableHtml(array $rows, State $state): string
     {
         $sorter = new DataSorter();
-        $sortedRows = $sorter->sort($rows, $state, $this->columns);
+        $sortedRows = $sorter->sort($rows, $state, $this->config->getColumns());
         $currentPageRows = $sorter->getCurrentPageRows($sortedRows, $state);
 
         $tableTop = $this->getTableTop();
@@ -118,7 +126,7 @@ class HtmlDataGrid implements DataGrid
     private function getTableHead(State $state): string
     {
         $html = "<tr>";
-        foreach($this->columns as $col) {
+        foreach($this->config->getColumns() as $col) {
             $column = $col['column'];
             //$html .= "<td><b>".$column->getLabel()."</b></td>";
             $html .= $this->getColumnLabelHtml($state, $column);
@@ -180,17 +188,11 @@ class HtmlDataGrid implements DataGrid
     {
         $html = "<tr>";
         if (is_array($row)) {
-            foreach($this->columns as $col) {
+            foreach($this->config->getColumns() as $col) {
                 $html .= $this->getCellHtml($row, $col);
             }
         } else {
-            $icontxt = '<svg class="bi bi-exclamation-triangle-fill" width="1em" height="1em"
-            viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165
-            13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982
-            1.566zM8 5a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905
-            0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
-            </svg>';
+            $icontxt = $this->getErrorHtml();
             $html .= "<td colspan='100%' class='text-danger'>".$icontxt
             ." Błąd wiersza - w tym wierszu znajdują się błędne dane</td>";
         }
@@ -208,63 +210,87 @@ class HtmlDataGrid implements DataGrid
             $val = $row[$col->getLabel()];
             $dataType = $col->getDataType();
             $formattedVal = $dataType->format($val);
-            $html = "<td style='text-align: $align'>$formattedVal";
+            $html = "<td style='text-align: $align'>$formattedVal</td>";
         } else {
-            $html .= '<td style="text-align: '.$align.'">
-            <svg class="bi bi-exclamation-triangle-fill" width="1em" height="1em"
-            viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165
-            13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982
-            1.566zM8 5a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905
-            0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
-            </svg>';
+            $html .= '<td style="text-align: '.$align.'">'.$this->getErrorHtml().'</td>';
         }
-        $html .= "</td>";
         return $html;
     }
 
     private function getPaginationHtml(array $rows, State $state): string
     {
         $currentPage = $state->getCurrentPage();
+        $pagesCount = $this->countPages($rows, $state);
+
+        $baseLink = $this->getBaseButtonLink($state);
+        
+        $start = "<nav class='mt-2'><ul class='pagination justify-content-center'>";
+        $prevPageButton = $this->getPreviousPageButtonHtml($baseLink, $currentPage, $pagesCount);
+        $middle = $this->getPageButtonsHtml($baseLink, $currentPage, $pagesCount);
+        $nextPageButton = $this->getNextPageButtonHtml($baseLink, $currentPage, $pagesCount);
+        $end = "</ul></nav>";
+
+        $paginationHtml = $start.$prevPageButton.$middle.$nextPageButton.$end;
+        return $paginationHtml;
+    }
+
+    private function countPages(array $rows, State $state): int
+    {
         $pagesCount = intdiv(count($rows), $state->getRowsPerPage());
         if (count($rows) % $state->getRowsPerPage() > 0)
         {
             $pagesCount++;
         }
 
+        return $pagesCount;
+    }
+
+    private function getBaseButtonLink(State $state): string
+    {
         $order = $state->getOrder();
         $orderBy = $state->getOrderBy();
-        $buttonLinkDestination = "index.php?order=$order&orderBy=$orderBy&page=";
-        
-        $start = "<nav class='mt-2'><ul class='pagination justify-content-center'>";
+        $baseLink = "index.php?order=$order&orderBy=$orderBy&page=";
+        return $baseLink;
+    }
 
+    private function getPreviousPageButtonHtml(string $baseLink, int $currentPage, int $pagesCount): string
+    {
         $prevPage = $currentPage-1;
-        $startButton = "<li class='page-item'><a class='page-link' href='".$buttonLinkDestination.$prevPage."'>Previous</a></li>";
-        if ($currentPage == 1)
-        {
-            $startButton = "<li class='page-item disabled'><a class='page-link' href='#'>Previous</a></li>";
+
+        if ($currentPage == 1) {
+            $html = "<li class='page-item disabled'><a class='page-link' href='#'>Previous</a></li>";
+        } else {
+            $html = "<li class='page-item'><a class='page-link' href='".$baseLink.$prevPage."'>Previous</a></li>";
         }
 
-        $middle = "";
+        return $html;
+    }
+
+    private function getNextPageButtonHtml(string $baseLink, int $currentPage, int $pagesCount): string
+    {
+        $nextPage = $currentPage+1;
+
+        if ($currentPage == $pagesCount)
+        {
+            $html = "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";
+        } else {
+            $html = "<li class='page-item'><a class='page-link' href='".$baseLink.$nextPage."'>Next</a></li>";
+        }
+
+        return $html;
+    }
+
+    private function getPageButtonsHtml(string $baseLink, int $currentPage, int $pagesCount): string
+    {
+        $html = "";
         for($i = 1; $i <= $pagesCount; $i++)
         {
             if ($i == $currentPage) {
-                $middle .= "<li class='page-item active'><a class='page-link' href='".$buttonLinkDestination.$i."'>".$i."</a></li>";
+                $html .= "<li class='page-item active'><a class='page-link' href='".$baseLink.$i."'>".$i."</a></li>";
             } else {
-                $middle .= "<li class='page-item'><a class='page-link' href='".$buttonLinkDestination.$i."'>".$i."</a></li>";
+                $html .= "<li class='page-item'><a class='page-link' href='".$baseLink.$i."'>".$i."</a></li>";
             }
         }
-
-        $nextPage = $currentPage+1;
-        $endButton = "<li class='page-item'><a class='page-link' href='".$buttonLinkDestination.$nextPage."'>Next</a></li>";
-        if ($currentPage == $pagesCount)
-        {
-            $endButton = "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";
-        }
-
-        $end = "</ul></nav>";
-
-        $pagesHtml = $start.$startButton.$middle.$endButton.$end;
-        return $pagesHtml;
+        return $html;
     }
 }
