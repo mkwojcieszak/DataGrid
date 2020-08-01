@@ -95,19 +95,6 @@ class HtmlDataGrid implements DataGrid
         return $tableTop.$thead.$tableMiddle.$tbody.$tableBottom;
     }
 
-
-    private function getCurrentPageRows($rows, $state): array
-    {
-        function sortRows($a, $b)
-        {
-            //
-        }
-
-        $sortedRows = usort($rows, "sortRows");
-        $cpr = array();
-        return $cpr;
-    }
-
     private function getTableTop(): string
     {
         return "<table class='table table-bordered'><thead><tr>";
