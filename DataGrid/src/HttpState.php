@@ -42,17 +42,11 @@ class HttpState implements State
         }
     }
 
-    /**
-     * Zwraca aktualna strone DataGrid do wyświetlenia
-     */
     public function getCurrentPage(): int
     {
         return $this->page;
     }
 
-    /**
-     * Klucz kolumny, po której będzie sortowany DataGrid.
-     */
     public function getOrderBy(): string
     {
         return $this->orderBy;
@@ -63,9 +57,6 @@ class HttpState implements State
         return $this->order;
     }
 
-    /**
-     * Czy dane mają zostać posortowane malejąco?
-     */
     public function isOrderDesc(): bool
     {
         if ($this->order == "desc") {
@@ -75,9 +66,6 @@ class HttpState implements State
         }
     }
 
-    /**
-     * Czy dane mają zostać posortowane rosnąco?
-     */
     public function isOrderAsc(): bool
     {
         if ($this->order == "asc") {
@@ -87,9 +75,6 @@ class HttpState implements State
         }
     }
 
-    /**
-     * Zwraca ilośc wierszy które mają zostać wyświetlone na jednej stronie.
-     */
     public function getRowsPerPage(): int
     {
         return $this->pageSize;

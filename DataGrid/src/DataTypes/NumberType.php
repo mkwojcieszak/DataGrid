@@ -34,6 +34,7 @@ class NumberType implements DataType
 
     public function format(string $value): string
     {
+        $value = strip_tags($value);
         if ($this->staticDecimals == true) {
             $value *= $this->numbersDecimals;
             if ($this->roundingFunction == "floor") {

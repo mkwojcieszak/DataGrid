@@ -47,6 +47,7 @@ class MoneyType implements DataType
             0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
             </svg> Błędna waluta';
         } else {
+            $value = strip_tags($value);
             $this->showCents ? $decimals = 2 : $decimals = 0;
             $value = number_format($value, $decimals, $this->moneyDecimalsSeparator ,$this->moneyTousandsSeparator);
             $value .= " ".$this->currency;

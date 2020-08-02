@@ -15,8 +15,8 @@ class TextType implements DataType
 
     public function format(string $value): string
     {
-        $notags = strip_tags($value);
-        $hardspace = str_replace(" ", "&nbsp", $notags);
-        return $hardspace;
+        $value = strip_tags($value);
+        $value = str_replace(" ", "&nbsp", $value);
+        return $value;
     }
 }

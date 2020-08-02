@@ -14,10 +14,11 @@ class DataSorter
         $page = $state->getCurrentPage();
         $pageSize = $state->getRowsPerPage();
         $cpr = array();
-        $firstIndex = $pageSize * ($page - 1);
+        $firstRowIndex = $pageSize * ($page - 1);
+        $rows = array_values($rows);
 
         for($i = 0; $i < $pageSize; $i++) {
-            $ind = $firstIndex + $i;
+            $ind = $firstRowIndex + $i;
             if ($ind < count($rows)) {
                 $cpr[] = $rows[$ind];
             }
@@ -78,9 +79,8 @@ class DataSorter
         return $invalidRows;
     }
 
-    private function getSortingFunction(string $order, string $orderBy, array $columns):string
+    private function getSortingFunction(string $order, string $orderBy, array $columns): string
     {
-        //
         $func = "compare";
         foreach($columns as $col) {
             $column = $col['column'];
@@ -95,7 +95,7 @@ class DataSorter
         return $func;
     }
 
-    private function compareTextAsc($a, $b)
+    private function compareTextAsc($a, $b): int
     {
         if (isset($a[$this->orderBy])) {
             $av = $a[$this->orderBy];
@@ -119,7 +119,7 @@ class DataSorter
         return ($arr[0] == $arr2[0]) ? -1 : 1;
     }
 
-    private function compareTextDesc($a, $b)
+    private function compareTextDesc($a, $b): int
     {
         if (isset($a[$this->orderBy])) {
             $av = $a[$this->orderBy];
@@ -142,7 +142,7 @@ class DataSorter
         return ($arr[0] == $arr2[0]) ? 1 : -1;
     }
 
-    private function compareNumbersAsc($a, $b)
+    private function compareNumbersAsc($a, $b): int
     {
         $av = $a[$this->orderBy];
         $bv = $b[$this->orderBy];
@@ -153,7 +153,7 @@ class DataSorter
         return ($av < $bv) ? -1 : 1;
     }
 
-    private function compareNumbersDesc($a, $b)
+    private function compareNumbersDesc($a, $b): int
     {
         $av = $a[$this->orderBy];
         $bv = $b[$this->orderBy];

@@ -83,7 +83,8 @@ class DefaultConfig implements Config
             $this->numbersDecimalsSeparator,
             $this->numbersDecimals,
             $this->staticDecimals,
-            $this->roundingFunction);
+            $this->roundingFunction
+        );
         $col = new TableColumn($key, $type, "right");
         $this->addColumn($key, $col);
         return $this;
@@ -124,7 +125,12 @@ class DefaultConfig implements Config
 
     public function addCurrencyColumn(string $key, string $currency): Config
     {
-        $type = new MoneyType($currency, $this->moneyTousandsSeparator, $this->moneyDecimalsSeparator, $this->showCents);
+        $type = new MoneyType(
+            $currency,
+            $this->moneyTousandsSeparator,
+            $this->moneyDecimalsSeparator,
+            $this->showCents
+        );
         $col = new TableColumn($key, $type, "right");
 
         $this->addColumn($key, $col);

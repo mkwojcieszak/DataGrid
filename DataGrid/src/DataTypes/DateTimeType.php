@@ -22,6 +22,7 @@ class DateTimeType implements DataType
 
     public function format(string $value): string
     {
+        $value = strip_tags($value);
         $date = new \DateTime($value);
         $html = $date->format($this->dateTimeFormat);
         return $html;
